@@ -13,12 +13,9 @@ import com.android.future.usb.UsbManager;
 import com.irobuddy.event.AccessorySignal;
 import com.irobuddy.event.EventBuilder;
 import com.irobuddy.event.GlobalChannel;
-import com.irobuddy.qp.QActive;
-import com.irobuddy.qp.QBasicChannel;
-import com.irobuddy.qp.QEvent;
-import com.irobuddy.qp.QState;
+import com.irobuddy.matrix.*;
 
-public class AccessoryAO extends QActive implements Runnable{
+public class AccessoryAO extends ActiveNode implements Runnable{
 	final static String TAG = "ACCESSORY";
 	
 	UsbManager usbMng;
@@ -27,10 +24,10 @@ public class AccessoryAO extends QActive implements Runnable{
 		usbMng = usbManager;
 	}
 	
-	final static QEvent attEvent = EventBuilder.build((byte)0, 
+	final static MxEvent attEvent = EventBuilder.build((byte)0, 
 			GlobalChannel.EVENT_CH_ACC_C, AccessorySignal.ACC_SIG_ATTACH);
 	
-	final static QEvent detEvent = EventBuilder.build((byte)0, 
+	final static MxEvent detEvent = EventBuilder.build((byte)0, 
 			GlobalChannel.EVENT_CH_ACC_C, AccessorySignal.ACC_SIG_DETACH);
 	
 	public void start( UsbAccessory acc) {
@@ -76,7 +73,7 @@ public class AccessoryAO extends QActive implements Runnable{
 
 	public void run() {
 		int ret = 0;
-		byte[] eRaw = new byte[QEvent.EVENT_SERDES_SIZE];
+		byte[] eRaw = new byte[MxEvent.EVENT_SERDES_SIZE];
 
 		while (ret >= 0) {
 			try {
@@ -84,33 +81,33 @@ public class AccessoryAO extends QActive implements Runnable{
 			} catch (IOException error) {
 				break;
 			}
-			if( ret < QEvent.EVENT_HEADER_SIZE
-				|| ret != (eRaw[QEvent.EVENT_LENGTH_OFFSET] + QEvent.EVENT_HEADER_SIZE) )
+			if( ret < MxEvent.EVENT_HEADER_SIZE
+				|| ret != (eRaw[MxEvent.EVENT_LENGTH_OFFSET] + MxEvent.EVENT_HEADER_SIZE) )
 				continue;
 			
 
-			QEvent e = EventBuilder.build( eRaw);
+			MxEvent e = EventBuilder.build( eRaw);
 			if( null == e) 
 				continue;
 			
-			if( e.channel == QBasicChannel.EVENT_CH_PRIVATE) {
+			if( e.channel == BaseChannel.EVENT_CH_ROBUDDY) {
 				this.postFIFO(e);
 			}
 			else {
-				e.type &= ~QEvent.EVENT_TYPE_RELAY;
+				e.type &= ~MxEvent.EVENT_TYPE_RELAY;
 				publish(e);
 				//as eBlock be consumed, new it again
-				eRaw = new byte[QEvent.EVENT_SERDES_SIZE];
+				eRaw = new byte[MxEvent.EVENT_SERDES_SIZE];
 			}
 		}
 	}
 	
-	public boolean relayEvent( QEvent event) {
+	public boolean relayEvent( MxEvent event) {
 		if( event.channel == GlobalChannel.EVENT_CH_ACC_C
-				|| QBasicChannel.EVENT_CH_PRIVATE == event.channel)
+				|| BaseChannel.EVENT_CH_ROBUDDY == event.channel)
 			return false;
 
-		if((event.type & QEvent.EVENT_TYPE_RELAY) == QEvent.EVENT_TYPE_RELAY) {
+		if((event.type & MxEvent.EVENT_TYPE_RELAY) == MxEvent.EVENT_TYPE_RELAY) {
 			if (mOutputStream != null) {
 				try {
 					mOutputStream.write(event.dump());
@@ -123,25 +120,25 @@ public class AccessoryAO extends QActive implements Runnable{
 	}
 	
 	//State machine ---------------------------------------------
-	public final QState initial = new QState() {
+	public final MxState initial = new MxState() {
 		@Override
-		public QState kick(QEvent event){
+		public MxState kick(MxEvent event){
 			return 	connected;
 		}
 	};
 	
-	public QState connected = new QState() {
+	public MxState connected = new MxState() {
 		@Override
-		public QState kick(QEvent event){
+		public MxState kick(MxEvent event){
 			if( null == event)
 				return null;
 			if( relayEvent( event)) {
-				return QActive.QSTATE_HANDLED;
+				return ActiveNode.QSTATE_HANDLED;
 			}
 			
-			if( QBasicChannel.EVENT_CH_PRIVATE == event.channel) {
+			if( BaseChannel.EVENT_CH_ROBUDDY == event.channel) {
 			}
-			return QActive.QSTATE_HANDLED;
+			return ActiveNode.QSTATE_HANDLED;
 		}
 	};
 	

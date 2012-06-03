@@ -1,25 +1,24 @@
 package com.irobuddy.event;
 
-import com.irobuddy.qp.QEvent;
-import com.irobuddy.qp.QSignal;
+import com.irobuddy.matrix.*;
 
-public class MoveEvent extends QEvent {
+public class MoveEvent extends MxEvent {
 
 	private int leftWheelSpeed;
 	private int rightWheelSpeed;
 	
 	public static MoveEvent build( byte[] rawEvent) {
 		MoveEvent e = new MoveEvent();
-		e.type = rawEvent[QEvent.EVENT_TYPE_OFFSET];
-		e.channel = GlobalChannel.MAX_PUB_EVENT_CH.fromByte(rawEvent[QEvent.EVENT_CHANNEL_OFFSET]);
-		e.sig = MoveSignal.MV_SIG_BACKWARD.fromByte( rawEvent[QEvent.EVENT_SIG_OFFSET]);
-		e.length = rawEvent[QEvent.EVENT_LENGTH_OFFSET];
+		e.type = rawEvent[MxEvent.EVENT_TYPE_OFFSET];
+		e.channel = GlobalChannel.MAX_PUB_EVENT_CH.fromByte(rawEvent[MxEvent.EVENT_CHANNEL_OFFSET]);
+		e.sig = MoveSignal.MV_SIG_BACKWARD.fromByte( rawEvent[MxEvent.EVENT_SIG_OFFSET]);
+		e.length = rawEvent[MxEvent.EVENT_LENGTH_OFFSET];
 		return e;
 	}
 	
 	public static MoveEvent build( String jsonEvent) {
 		MoveEvent e = new MoveEvent();
-		e.type = QEvent.EVENT_TYPE_RELAY;
+		e.type = MxEvent.EVENT_TYPE_RELAY;
 		e.channel = GlobalChannel.EVENT_CH_MOVE_C;
 		e.sig = MoveSignal.MV_SIG_SPEED;
 		String[] speeds = jsonEvent.split(" ");

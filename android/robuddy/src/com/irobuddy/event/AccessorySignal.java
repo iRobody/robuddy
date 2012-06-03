@@ -1,13 +1,12 @@
 package com.irobuddy.event;
 
-import com.irobuddy.qp.QSignal;
-import com.irobuddy.qp.QBasicSignal;
+import com.irobuddy.matrix.*;
 
-public enum AccessorySignal implements QSignal{
+public enum AccessorySignal implements MxSignal{
 	ACC_SIG_ATTACH,
 	ACC_SIG_DETACH;
 	
-	final static int offset = QBasicSignal.MAX_BASIC_EVENT_SIG.toByte();
+	final static int offset = BaseSignal.MAX_BASIC_EVENT_SIG.toByte();
 	
 	public byte toByte() {
 		byte sig;
@@ -16,9 +15,9 @@ public enum AccessorySignal implements QSignal{
 		return sig;
 	}
 	
-	public QSignal fromByte( byte sig) {
+	public MxSignal fromByte( byte sig) {
 		if( sig < offset) 
-			return QBasicSignal.EVENT_SIG_RESET.fromByte(sig);
+			return BaseSignal.EVENT_SIG_RESET.fromByte(sig);
 		return AccessorySignal.values()[sig-offset];
 	}
 }

@@ -1,8 +1,6 @@
 package com.irobuddy.robuddy;
 
 import com.irobuddy.R;
-import com.irobuddy.R.layout;
-
 import android.app.Activity;
 import android.os.Bundle;
 
