@@ -1,7 +1,11 @@
 package com.irobuddy.event;
 
-import com.irobuddy.matrix.*;
+import java.util.Map;
 
+import com.irobuddy.matrix.*;
+import com.irobuddy.move.MoveEventBuilder;
+
+/* decide the builder by channel*/
 public class EventBuilder {
 	public static MxEvent build( byte type, MxChannel ch, MxSignal sig) {
 		MxEvent e = new MxEvent( type, ch, sig);
@@ -12,28 +16,31 @@ public class EventBuilder {
 		MxEvent e = null;
 		MxChannel ch = null;
 		try {
-			ch = GlobalChannel.MAX_PUB_EVENT_CH.fromByte( rawEvent[MxEvent.EVENT_CHANNEL_OFFSET]);
+			ch = GlobalChannel.MAX_GLOBAL_PUB_EVENT_CH.fromByte( rawEvent[MxEvent.EVENT_CHANNEL_OFFSET]);
 		} finally {
 			if( null == ch)
 				return null;
 		}
-		//for private Event, only build the basic part
-		if( BaseChannel.EVENT_CH_ROBUDDY == ch) {
+		//for private Event
+		if( BaseChannel.EVENT_CH_PRIVATE == ch) {
 			return MxEvent.build( rawEvent);
 		}
 		
-		switch( (GlobalChannel)ch) {
+		switch( (RobodyChannel)ch) {
 		case EVENT_CH_MOVE_S:
 		case EVENT_CH_MOVE_C:
-			e = MoveEvent.build(rawEvent);
+			e = MoveEventBuilder.build(rawEvent);
 			break;
 		}
 		return e;
 	}
 	
-	public static MxEvent build( String strEvent) {
-		MxEvent e = null;
-
-		return e;
+	public static MxEvent build( Map<String, String> jsonEvent) {
+		return null;
+	}
+	
+	public static MxEvent build( String jsonStr) {
+		
+		return null;
 	}
 }

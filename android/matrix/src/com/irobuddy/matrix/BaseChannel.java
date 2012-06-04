@@ -1,7 +1,7 @@
 package com.irobuddy.matrix;
 
 public enum BaseChannel implements MxChannel{
-	EVENT_CH_ROBUDDY,
+	EVENT_CH_PRIVATE,
 	MAX_BASIC_EVENT_CH;
 
 	public byte toByte( ) {

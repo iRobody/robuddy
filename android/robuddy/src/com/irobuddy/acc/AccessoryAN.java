@@ -10,25 +10,24 @@ import android.util.Log;
 
 import com.android.future.usb.UsbAccessory;
 import com.android.future.usb.UsbManager;
-import com.irobuddy.event.AccessorySignal;
 import com.irobuddy.event.EventBuilder;
-import com.irobuddy.event.GlobalChannel;
+import com.irobuddy.event.RobodyChannel;
 import com.irobuddy.matrix.*;
 
-public class AccessoryAO extends ActiveNode implements Runnable{
+public class AccessoryAN extends ActiveNode implements Runnable{
 	final static String TAG = "ACCESSORY";
 	
 	UsbManager usbMng;
-	public AccessoryAO( UsbManager usbManager) {
+	public AccessoryAN( UsbManager usbManager) {
 		super();
 		usbMng = usbManager;
 	}
 	
 	final static MxEvent attEvent = EventBuilder.build((byte)0, 
-			GlobalChannel.EVENT_CH_ACC_C, AccessorySignal.ACC_SIG_ATTACH);
+			RobodyChannel.EVENT_CH_ACC_C, AccessorySignal.ACC_SIG_ATTACH);
 	
 	final static MxEvent detEvent = EventBuilder.build((byte)0, 
-			GlobalChannel.EVENT_CH_ACC_C, AccessorySignal.ACC_SIG_DETACH);
+			RobodyChannel.EVENT_CH_ACC_C, AccessorySignal.ACC_SIG_DETACH);
 	
 	public void start( UsbAccessory acc) {
 		attached( acc);
@@ -90,7 +89,7 @@ public class AccessoryAO extends ActiveNode implements Runnable{
 			if( null == e) 
 				continue;
 			
-			if( e.channel == BaseChannel.EVENT_CH_ROBUDDY) {
+			if( e.channel == BaseChannel.EVENT_CH_PRIVATE) {
 				this.postFIFO(e);
 			}
 			else {
@@ -103,8 +102,8 @@ public class AccessoryAO extends ActiveNode implements Runnable{
 	}
 	
 	public boolean relayEvent( MxEvent event) {
-		if( event.channel == GlobalChannel.EVENT_CH_ACC_C
-				|| BaseChannel.EVENT_CH_ROBUDDY == event.channel)
+		if( event.channel == RobodyChannel.EVENT_CH_ACC_C
+				|| BaseChannel.EVENT_CH_PRIVATE == event.channel)
 			return false;
 
 		if((event.type & MxEvent.EVENT_TYPE_RELAY) == MxEvent.EVENT_TYPE_RELAY) {
@@ -136,7 +135,7 @@ public class AccessoryAO extends ActiveNode implements Runnable{
 				return ActiveNode.QSTATE_HANDLED;
 			}
 			
-			if( BaseChannel.EVENT_CH_ROBUDDY == event.channel) {
+			if( BaseChannel.EVENT_CH_PRIVATE == event.channel) {
 			}
 			return ActiveNode.QSTATE_HANDLED;
 		}

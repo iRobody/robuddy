@@ -33,24 +33,31 @@ public class MxEvent {
 		length =  rawEvent[EVENT_LENGTH_OFFSET];
 		
 		raw = rawEvent;
-		rawBuf = ByteBuffer.wrap(rawEvent);
-		dataBuf = ByteBuffer.wrap(rawEvent, EVENT_HEADER_SIZE, length);
+		rawBuf = ByteBuffer.wrap(raw);
+		dataBuf = ByteBuffer.wrap(raw, EVENT_HEADER_SIZE, length);
 	}
 	
 	public static MxEvent build( byte[] rawEvent) {
 		MxEvent e = null;
 		try {
-			e = new MxEvent( rawEvent, BaseChannel.EVENT_CH_ROBUDDY, BaseSignal.EVENT_SIG_RESET);
+			e = new MxEvent( rawEvent, BaseChannel.EVENT_CH_PRIVATE, BaseSignal.EVENT_SIG_RESET);
 		} finally {
 		}
 		return e;
 	}
 	
 	public byte[] dump() {
+		if( null == raw) {
+			byte[] raw = new byte[EVENT_HEADER_SIZE+ length];
+			rawBuf = ByteBuffer.wrap(raw);
+			dataBuf = ByteBuffer.wrap(raw, EVENT_HEADER_SIZE, length);
+			raw[EVENT_TYPE_OFFSET] = type;
+			raw[EVENT_CHANNEL_OFFSET] = channel.toByte();
+			raw[EVENT_SIG_OFFSET] = sig.toByte();
+			raw[EVENT_LENGTH_OFFSET] = length;
+		}
 		return raw;
 	}
-	
-
 	
 	//event data structure, total 64byte size---------------------------------------
 	public byte type = EVENT_TYPE_RELAY;

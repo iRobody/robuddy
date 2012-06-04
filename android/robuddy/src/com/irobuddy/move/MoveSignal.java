@@ -1,14 +1,13 @@
-package com.irobuddy.event;
+package com.irobuddy.move;
 
 import com.irobuddy.matrix.*;
 
 public enum MoveSignal implements MxSignal{
-	MV_SIG_FORWARD /* = MAX_BASIC_EVENT_SIG*/,
-	MV_SIG_BACKWARD,
-	MV_SIG_STOP,
-	MV_SIG_RIGH,
-	MV_SIG_LEFT,
-	MV_SIG_SPEED,
+	/* offset = MAX_BASIC_EVENT_SIG*/
+	MV_SIG_DIRECT,
+	MV_SIG_STEER,
+	MV_SIG_ACCEL,
+	MV_SIG_BRAKE,
 	MV_SIG_RAW,
 
 	MAX_MOVE_SIG;
