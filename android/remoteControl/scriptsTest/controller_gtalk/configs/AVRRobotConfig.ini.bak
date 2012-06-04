@@ -1,0 +1,19 @@
+[basics]
+audioOn: True
+currentSpeed: 5
+cardinalMargin: 10
+microcontroller: arduino
+mode: robot
+
+[control]
+inputMethod: commandByXMPP
+port: 9002
+outputMethod: outputBluetooth
+
+[xmpp]
+server: talk.google.com
+port: 5223
+# Use the full username including what comes after the @
+robotUsername: irobuddy@gmail.com
+# Leave the password blank to be prompted at runtime for improved security
+robotPassword: rockbody

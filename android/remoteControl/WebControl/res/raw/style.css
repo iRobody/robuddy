@@ -1,0 +1,17 @@
+body {
+    font-family: arial, sans-serif;
+    padding: 10px;
+}
+
+#robotsStatus {
+    width: 457px; 
+    height: 319px; 
+    position: absolute; 
+    z-index: 900; 
+    left: 289px; 
+    top: 91px
+    border: solid 4px #000000;
+    font-weight: bold;
+    font-family: monospace;
+    font-size: 30px;
+}
