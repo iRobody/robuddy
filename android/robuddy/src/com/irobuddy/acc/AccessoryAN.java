@@ -12,7 +12,10 @@ import com.android.future.usb.UsbAccessory;
 import com.android.future.usb.UsbManager;
 import com.irobuddy.event.EventBuilder;
 import com.irobuddy.event.RobodyChannel;
-import com.irobuddy.matrix.*;
+import com.irobuddy.matrix.ActiveNode;
+import com.irobuddy.matrix.BaseChannel;
+import com.irobuddy.matrix.MxEvent;
+import com.irobuddy.matrix.MxState;
 
 public class AccessoryAN extends ActiveNode implements Runnable{
 	final static String TAG = "ACCESSORY";
@@ -102,14 +105,15 @@ public class AccessoryAN extends ActiveNode implements Runnable{
 	}
 	
 	public boolean relayEvent( MxEvent event) {
-		if( event.channel == RobodyChannel.EVENT_CH_ACC_C
+		if( RobodyChannel.EVENT_CH_ACC_C == event.channel
 				|| BaseChannel.EVENT_CH_PRIVATE == event.channel)
 			return false;
 
 		if((event.type & MxEvent.EVENT_TYPE_RELAY) == MxEvent.EVENT_TYPE_RELAY) {
 			if (mOutputStream != null) {
 				try {
-					mOutputStream.write(event.dump());
+					final byte[] d = event.dump();
+					mOutputStream.write(d);
 				} catch (IOException error) {
 					Log.e(TAG, "write failed", error);
 				}

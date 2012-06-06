@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.android.future.usb.UsbAccessory;
 import com.android.future.usb.UsbManager;
-import com.irobuddy.acc.AccessoryAO;
+import com.irobuddy.acc.AccessoryAN;
 
 public class Supervisor extends Activity
 {
@@ -57,7 +57,7 @@ public class Supervisor extends Activity
         	/* google api */
         	UsbManager usbMng = UsbManager.getInstance(this);
         	if( null == accAN) {
-        		accAN = new AccessoryAO( usbMng);
+        		accAN = new AccessoryAN( usbMng);
         	}
     		IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
     		filter.addAction(UsbManager.ACTION_USB_ACCESSORY_DETACHED);
@@ -91,7 +91,7 @@ public class Supervisor extends Activity
         }*/
     }
     
-    AccessoryAO accAN;
+    AccessoryAN accAN;
     static final String ACTION_USB_PERMISSION = "com.irobuddy.action.USB_PERMISSION";
 	private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
 		@Override
@@ -116,7 +116,7 @@ public class Supervisor extends Activity
 			} else if (UsbManager.ACTION_USB_ACCESSORY_ATTACHED.equals(action)) {
 	        	UsbManager usbMng = UsbManager.getInstance(Supervisor.this);
 	        	if( null == accAN) {
-	        		accAN = new AccessoryAO( usbMng);
+	        		accAN = new AccessoryAN( usbMng);
 	        	}
 	    		/* android sdk */
 				//UsbAccessory accessory = (UsbAccessory) intent.getParcelableExtra(UsbManager.EXTRA_ACCESSORY);

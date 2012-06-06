@@ -14,8 +14,8 @@ public class MxEvent {
 	public final static int EVENT_SIG_OFFSET = 2;
 	public final static int EVENT_LENGTH_OFFSET = 3;
 	
-	public final static short EVENT_TYPE_SUB = 0x01;
-	public final static short EVENT_TYPE_RELAY = 0x02;
+	public final static byte EVENT_TYPE_SUB = 0x01;
+	public final static byte EVENT_TYPE_RELAY = (byte)0x80;
 	
 	public MxEvent(){}
 	
@@ -48,7 +48,7 @@ public class MxEvent {
 	
 	public byte[] dump() {
 		if( null == raw) {
-			byte[] raw = new byte[EVENT_HEADER_SIZE+ length];
+			raw = new byte[EVENT_HEADER_SIZE+ length];
 			rawBuf = ByteBuffer.wrap(raw);
 			dataBuf = ByteBuffer.wrap(raw, EVENT_HEADER_SIZE, length);
 			raw[EVENT_TYPE_OFFSET] = type;
@@ -60,7 +60,7 @@ public class MxEvent {
 	}
 	
 	//event data structure, total 64byte size---------------------------------------
-	public byte type = EVENT_TYPE_RELAY;
+	public byte type = (byte)EVENT_TYPE_RELAY;
 	public MxChannel channel;
 	public MxSignal sig;			//size = 1byte
 	public byte length;
