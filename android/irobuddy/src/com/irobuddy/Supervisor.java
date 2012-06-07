@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.android.future.usb.UsbAccessory;
 import com.android.future.usb.UsbManager;
 import com.irobuddy.acc.AccessoryAN;
+import com.irobuddy.webface.WebFace;
 
 public class Supervisor extends Activity
 {
@@ -32,6 +33,8 @@ public class Supervisor extends Activity
         setContentView(R.layout.main);
         textV = (TextView)findViewById( R.id.hello_txt);
         handleIntent( getIntent());
+        
+        WebFace.getInstance(this).run();
     }
     
     @Override

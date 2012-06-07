@@ -1,17 +1,32 @@
 function onLeft(){
-		window.send('50 0');
+		window.send('250 200');
 }
 
 function onRight(){
-		window.send('0 50');
+		window.send('200 250');
 }
 
 function onUp(){
-		window.send('100 100');
+		window.send('255 255');
 }
 
 function onDown(){
-		window.send('-50 -50');
+		window.send('-255 -255');
+}
+
+function getKey() {
+       	var e =window.event;
+        var keycode =  e.keyCode;
+        switch (keycode) {
+	        case 37: //left
+	        	onLeft();
+	        case 38: //up
+	        	onUp();
+	        case 39: //right
+	        	onRight();
+	        case 40: //down
+	        	onDown();
+        }
 }
 
 window.onload = function() {
@@ -28,6 +43,8 @@ window.onload = function() {
     window.send = function (message) {
         ws.send(message);
     }
+    
+    document.onkeypress = getKey; //bind key press listener
 
 	/*
 	 turnLeft = document.getElementById('turnLeft');

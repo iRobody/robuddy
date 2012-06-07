@@ -1,4 +1,4 @@
-package com.irobuddy.webcontrol;
+package com.irobuddy.webface;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -26,8 +26,12 @@ public class WebSocketsHandler implements WebSocketHandler{
 	public void onMessage(WebSocketConnection connection, String msg)
 			throws Throwable {
 		
-		RobotsMsg cmdMsg = new RobotsMsg(msg);
-		cmdMsg.Dispatch();
+		RobotsCmdMsg cmdMsg = new RobotsCmdMsg(msg);
+		
+		if (cmdMsg.isValid()) {
+			WebFaceAN.getInstance().publish(cmdMsg.createMxEvent());
+		}
+		
 		/*
 		for (WebSocketConnection ws : connections) {
             ws.send(msg);

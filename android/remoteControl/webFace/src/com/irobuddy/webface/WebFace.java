@@ -1,4 +1,4 @@
-package com.irobuddy.webcontrol;
+package com.irobuddy.webface;
 
 import org.webbitserver.WebServer;
 import org.webbitserver.handler.StaticFileHandler;
@@ -7,15 +7,18 @@ import org.webbitserver.handler.logging.SimpleLogSink;
 import org.webbitserver.netty.NettyWebServer;
 
 
-import com.irobuddy.webcontrol.utils.Utils;
-import com.irobuddy.webcontrol.WebSocketsHandler;
+import com.irobuddy.webface.WebSocketsHandler;
+import com.irobuddy.webface.utils.Logger;
+import com.irobuddy.webface.utils.Utils;
 
 import android.content.Context;
 import android.os.Environment;
 
-public class WebControlServer {
+public class WebFace {
+	final static String TAG = "WebFace";
+	
 	//Singleton mode
-	private static WebControlServer mInstance;
+	private static WebFace mInstance;
 	
 	//Instances variables
 	private int mWebServerListenPort;
@@ -27,9 +30,9 @@ public class WebControlServer {
 	/*
 	 * irobuddy remoteWEBControl public API
 	 */
-	public static WebControlServer getInstance(Context context){
+	public static WebFace getInstance(Context context){
 		return mInstance == null ?
-				(mInstance = new WebControlServer(context)) :
+				(mInstance = new WebFace(context)) :
 					mInstance;
 	}
 	
@@ -60,7 +63,7 @@ public class WebControlServer {
 	 * irobuddy remoteWEBControl Internal methods
 	 */
 	
-	private WebControlServer(Context context){
+	private WebFace(Context context){
 		//set default configuration of local WEB server
 		mWebServerListenPort = 8080;
 		mWebServerRootDir = Environment.getExternalStorageDirectory() + "/irobuddy_web";
@@ -74,17 +77,18 @@ public class WebControlServer {
 		Utils.clearResource(mWebServerRootDir);
 		Utils.buildResource(mContext, mWebServerRootDir);
 		
+		//Create and start WebFaceAN
+		WebFaceAN.getInstance().start();
+		  
 		//Start WEB control server.
 		mControlServerThread = new WebControlServerThread();
 	}
 
 	private class WebControlServerThread extends Thread{
-		  public WebControlServerThread() {
-			  //nil
-		  }
-		  
+		
 		  @Override
 		  public void run() {
+			
 			  startWebControlServer();
 		  }
 		  
@@ -101,6 +105,8 @@ public class WebControlServer {
 		        server.add(mWebSocketURL, new WebSocketsHandler());
 		        
 		        server.start();
+		        
+		        Logger.getDefault().debug(TAG, "WEBControlServer start.");
 		    }
 	  }
 }
