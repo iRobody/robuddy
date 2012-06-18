@@ -1,17 +1,21 @@
 function onLeft(){
-		window.send('250 200');
+		window.send('50 0');
 }
 
 function onRight(){
-		window.send('200 250');
+		window.send('0 50');
 }
 
 function onUp(){
-		window.send('255 255');
+		window.send('100 100');
 }
 
 function onDown(){
-		window.send('-255 -255');
+		window.send('-100 -100');
+}
+
+function onStop(){
+		window.send('0 0');
 }
 
 function getKey() {
@@ -20,12 +24,19 @@ function getKey() {
         switch (keycode) {
 	        case 37: //left
 	        	onLeft();
+	        	break;
 	        case 38: //up
 	        	onUp();
+	        	break;
 	        case 39: //right
 	        	onRight();
+	        	break;
 	        case 40: //down
 	        	onDown();
+	        	break;
+	        case 32: //stop
+	         	onStop();
+	         	break;
         }
 }
 
@@ -45,7 +56,7 @@ window.onload = function() {
     }
     
     document.onkeypress = getKey; //bind key press listener
-
+	document.onkeydown = getKey; //bind key press listener
 	/*
 	 turnLeft = document.getElementById('turnLeft');
 	
