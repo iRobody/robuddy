@@ -1,5 +1,8 @@
 package com.irobuddy.move;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.irobuddy.matrix.*;
 
 public class MoveEventBuilder {
@@ -17,9 +20,31 @@ public class MoveEventBuilder {
 		case MV_SIG_BRAKE:
 			return MoveBrakeEvent.build(rawEvent);
 		case MV_SIG_RAW:
-			return MoveEvent.build( rawEvent);
+			return MoveRawEvent.build( rawEvent);
 		}
 		return null;
+	}
+	
+	public static MxEvent build( JSONObject jsonEvent) {
+		try {
+			MxSignal sig = MoveSignal.MAX_MOVE_SIG.fromByte( (byte)(jsonEvent.getInt(MxEvent.EVENT_SIG_NAME)));
+		
+			switch( (MoveSignal)sig) {
+			case MV_SIG_DIRECT:
+				return MoveDirectEvent.build(jsonEvent);
+			case MV_SIG_STEER:
+				return MoveSteerEvent.build(jsonEvent);
+			case MV_SIG_ACCEL:
+				return MoveAccelEvent.build(jsonEvent);
+			case MV_SIG_BRAKE:
+				return MoveBrakeEvent.build(jsonEvent);
+			case MV_SIG_RAW:
+				return MoveRawEvent.build( jsonEvent);
+			}
+		} catch (JSONException error) {
+			// TODO Auto-generated catch block
+		}
+		return null;		
 	}
 	
 }

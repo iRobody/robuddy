@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<style name="Theme.Portal" parent="@android:Theme.Wallpaper">
+		<item name="android:windowNoTitle">true</item>
+	</style>
+	
+	<style name="Theme.Top" parent="@android:style/Theme.NoTitleBar.Fullscreen">
+		<item name="android:windowNoTitle">true</item>
+	</style>
+</resources>

@@ -53,6 +53,10 @@ public class AccessoryAN extends ActiveNode implements Runnable{
 		}
 	}
 	
+	public boolean isAttached( ) {
+		return (null != mAccessory);
+	}
+	
 	public void attached( UsbAccessory acc) {
 		mFileDescriptor = usbMng.openAccessory(acc);
 		if (mFileDescriptor != null) {
@@ -81,6 +85,7 @@ public class AccessoryAN extends ActiveNode implements Runnable{
 			try {
 				ret = mInputStream.read(eRaw);
 			} catch (IOException error) {
+				stop(mAccessory);
 				break;
 			}
 			if( ret < MxEvent.EVENT_HEADER_SIZE
@@ -115,6 +120,7 @@ public class AccessoryAN extends ActiveNode implements Runnable{
 					final byte[] d = event.dump();
 					mOutputStream.write(d);
 				} catch (IOException error) {
+					stop(mAccessory);
 					Log.e(TAG, "write failed", error);
 				}
 			}
