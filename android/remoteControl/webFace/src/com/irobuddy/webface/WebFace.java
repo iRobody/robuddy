@@ -56,6 +56,8 @@ public class WebFace {
 	public void stop(){
 		((WebControlServerThread) mControlServerThread).stopWebControlServer();
 		mControlServerThread.interrupt();
+		mControlServerThread = null;
+		mInstance = null;
 		mIsRunning = false;
 	}
 	
@@ -113,6 +115,7 @@ public class WebFace {
 		  
 		  public void stopWebControlServer () {
 			  if (null != mWebServer) {
+				  
 				  mWebServer.stop();
 			  }
 		  }

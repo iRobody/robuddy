@@ -2,7 +2,7 @@ package com.irobuddy.webface;
 
 import com.irobuddy.event.RobodyChannel;
 import com.irobuddy.matrix.MxEvent;
-import com.irobuddy.move.MoveEvent;
+import com.irobuddy.move.MoveRawEvent;
 import com.irobuddy.move.MoveSignal;
 
 public class RobotsCmdMsg {
@@ -22,10 +22,10 @@ public class RobotsCmdMsg {
 	{
 		//TODO: call EventBuilder.build($jason-string)
 		
-		MoveEvent e = new MoveEvent();
+		MoveRawEvent e = new MoveRawEvent();
 		e.type = MxEvent.EVENT_TYPE_RELAY;
 		e.channel = RobodyChannel.EVENT_CH_MOVE_C;
-		e.sig = MoveSignal.MV_SIG_RAW;
+		e.signal = MoveSignal.MV_SIG_RAW;
 		String[] speeds = mCmdMsg.split(" ");
 		
 		int leftWheelSpeed = Integer.parseInt(speeds[0]);
