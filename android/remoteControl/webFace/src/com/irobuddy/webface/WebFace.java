@@ -54,6 +54,7 @@ public class WebFace {
 	}
 	
 	public void stop(){
+		((WebControlServerThread) mControlServerThread).stopWebControlServer();
 		mControlServerThread.interrupt();
 		mIsRunning = false;
 	}
@@ -85,10 +86,11 @@ public class WebFace {
 	}
 
 	private class WebControlServerThread extends Thread{
-		
+		  
+		  private WebServer mWebServer = null;
+		  
 		  @Override
 		  public void run() {
-			
 			  startWebControlServer();
 		  }
 		  
@@ -96,17 +98,25 @@ public class WebFace {
 		  * Start a HTTP and Websocket Server
 		  */
 		  public void startWebControlServer (){
-		    	WebServer server = new NettyWebServer(mWebServerListenPort);
+			  mWebServer = new NettyWebServer(mWebServerListenPort);
 		    	
-		        server.add(new LoggingHandler(new SimpleLogSink()));
+			  mWebServer.add(new LoggingHandler(new SimpleLogSink()));
 		        
-		        server.add(new StaticFileHandler(mWebServerRootDir));
+			  mWebServer.add(new StaticFileHandler(mWebServerRootDir));
 		        
-		        server.add(mWebSocketURL, new WebSocketsHandler());
+			  mWebServer.add(mWebSocketURL, new WebSocketsHandler());
 		        
-		        server.start();
+			  mWebServer.start();
 		        
-		        Logger.getDefault().debug(TAG, "WEBControlServer start.");
-		    }
+		      Logger.getDefault().debug(TAG, "WEBControlServer start.");
+		 }
+		  
+		  public void stopWebControlServer () {
+			  if (null != mWebServer) {
+				  mWebServer.stop();
+			  }
+		  }
 	  }
+	
+	  
 }
