@@ -36,7 +36,7 @@ public class WebFaceAN extends ActiveNode {
 		@Override
 		public MxState kick(MxEvent event){
 			//TODO : handle subscriber msg
-			return ActiveNode.QSTATE_HANDLED;
+			return ActiveNode.MX_STATE_HANDLED;
 		}
 	};
 }

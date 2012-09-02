@@ -11,16 +11,16 @@ public class MoveEventBuilder {
 		MxSignal sig = MoveSignal.MAX_MOVE_SIG.fromByte( rawEvent[MxEvent.EVENT_SIG_OFFSET]);
 		
 		switch( (MoveSignal)sig) {
-		case MV_SIG_DIRECT:
-			return MoveDirectEvent.build(rawEvent);
+		case MV_SIG_RAW:
+			return MoveRawEvent.build( rawEvent);
 		case MV_SIG_STEER:
 			return MoveSteerEvent.build(rawEvent);
 		case MV_SIG_ACCEL:
 			return MoveAccelEvent.build(rawEvent);
 		case MV_SIG_BRAKE:
 			return MoveBrakeEvent.build(rawEvent);
-		case MV_SIG_RAW:
-			return MoveRawEvent.build( rawEvent);
+		default:
+			break;
 		}
 		return null;
 	}
@@ -30,16 +30,16 @@ public class MoveEventBuilder {
 			MxSignal sig = MoveSignal.MAX_MOVE_SIG.fromByte( (byte)(jsonEvent.getInt(MxEvent.EVENT_SIG_NAME)));
 		
 			switch( (MoveSignal)sig) {
-			case MV_SIG_DIRECT:
-				return MoveDirectEvent.build(jsonEvent);
+			case MV_SIG_RAW:
+				return MoveRawEvent.build( jsonEvent);
 			case MV_SIG_STEER:
 				return MoveSteerEvent.build(jsonEvent);
 			case MV_SIG_ACCEL:
 				return MoveAccelEvent.build(jsonEvent);
 			case MV_SIG_BRAKE:
 				return MoveBrakeEvent.build(jsonEvent);
-			case MV_SIG_RAW:
-				return MoveRawEvent.build( jsonEvent);
+			default:
+				break;
 			}
 		} catch (JSONException error) {
 			// TODO Auto-generated catch block

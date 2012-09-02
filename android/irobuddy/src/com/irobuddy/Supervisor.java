@@ -53,7 +53,8 @@ public class Supervisor extends Activity
     @Override
     public void onPause() {
     	super.onPause();
-    	wakeLock.release();
+    	if( wakeLock.isHeld())
+    		wakeLock.release();
     }
     
     @Override

@@ -7,42 +7,47 @@ import com.irobuddy.event.RobodyChannel;
 import com.irobuddy.matrix.MxEvent;
 
 public class MoveBrakeEvent extends MxEvent {
-	public final static String MOVEBRAKE_EVENT_HARD_NAME = "hard";
+	public final static String MOVEBRAKE_EVENT_LEVEL_NAME = "level"; //0-1
 	
 	public final static int LENGTH = 1;
-	
-	public boolean hard;
+	public byte level;
 
-	public static MoveBrakeEvent build( byte[] rawEvent) {
-		MoveBrakeEvent e = new MoveBrakeEvent((rawEvent[4]==1));
-		e.type = rawEvent[MxEvent.EVENT_TYPE_OFFSET];
+	public MoveBrakeEvent( byte level) {
+		super( RobodyChannel.EVENT_CH_MOVE_C, MoveSignal.MV_SIG_BRAKE);
+		length = LENGTH;
+		this.level = level;
+	}
+	
+	public MoveBrakeEvent( byte[] byteEvent) {
+		super(byteEvent, RobodyChannel.EVENT_CH_MOVE_C, MoveSignal.MV_SIG_BRAKE);
+		length = LENGTH;
+		level = byteEvent[MxEvent.EVENT_HEADER_SIZE];
+	}
+	
+	public MoveBrakeEvent( JSONObject jsonEvent) throws JSONException {
+		super( jsonEvent, RobodyChannel.EVENT_CH_MOVE_C, MoveSignal.MV_SIG_BRAKE);
+		length = LENGTH;
+		level = (byte)jsonEvent.getInt( MOVEBRAKE_EVENT_LEVEL_NAME);
+	}
+	
+	public static MoveBrakeEvent build( byte[] byteEvent) {
+		MoveBrakeEvent e = new MoveBrakeEvent(byteEvent);
+		e.level = byteEvent[MxEvent.EVENT_HEADER_SIZE];
 		return e;
 	}
 	
 	public static MoveBrakeEvent build( JSONObject jsonEvent) {
-		MoveBrakeEvent e = new MoveBrakeEvent(false);
 		try {
-			e.type = (byte)(jsonEvent.getInt( MxEvent.EVENT_TYPE_NAME));
-			e.hard = jsonEvent.getBoolean( MOVEBRAKE_EVENT_HARD_NAME);
+			MoveBrakeEvent e = new MoveBrakeEvent( jsonEvent);
+			return e;
 		} catch (JSONException error) {
 			return null;
 		}
-		return e;
-	}
-	
-	public MoveBrakeEvent( boolean hard) {
-		super();
-		type = MxEvent.EVENT_TYPE_RELAY;
-		channel = RobodyChannel.EVENT_CH_MOVE_C;
-		signal = MoveSignal.MV_SIG_BRAKE;
-		length = LENGTH;
-		this.hard = hard;
 	}
 	
 	public byte[] dump() {
-		byte[] rawEvent = super.dump();
-
-		rawEvent[4] = hard?(byte)1:0;
-		return rawEvent;
+		byte[] byteEvent = super.initDump();
+		byteEvent[MxEvent.EVENT_HEADER_SIZE] = level;
+		return byteEvent;
 	}
 }

@@ -1,15 +1,15 @@
-package com.irobuddy.move;
+package com.irobuddy.range;
 
-import com.irobuddy.matrix.*;
+import com.irobuddy.matrix.BaseSignal;
+import com.irobuddy.matrix.MxSignal;
+import com.irobuddy.move.MoveSignal;
 
-public enum MoveSignal implements MxSignal{
+public enum RangeSignal implements MxSignal {
+
 	/* offset = MAX_BASIC_EVENT_SIG*/
-	MV_SIG_RAW,
-	MV_SIG_STEER,
-	MV_SIG_ACCEL,
-	MV_SIG_BRAKE,
-
-	MAX_MOVE_SIG;
+	RNG_SIG_EDGE,
+	RNG_SIG_WALL,
+	MAX_RANGE_SIG;
 	
 	final static int offset = BaseSignal.MAX_BASIC_EVENT_SIG;
 	
@@ -25,4 +25,5 @@ public enum MoveSignal implements MxSignal{
 			return BaseSignal.EVENT_SIG_RESET.fromByte(sig);
 		return MoveSignal.values()[sig-offset];
 	}
+
 }

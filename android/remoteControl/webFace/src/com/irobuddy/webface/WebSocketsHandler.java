@@ -6,6 +6,10 @@ import java.util.Set;
 import org.webbitserver.WebSocketConnection;
 import org.webbitserver.WebSocketHandler;
 
+import com.irobuddy.event.EventBuilder;
+import com.irobuddy.matrix.Matrix;
+import com.irobuddy.matrix.MxEvent;
+
 public class WebSocketsHandler implements WebSocketHandler{
 
 	private Set<WebSocketConnection> connections = new HashSet<WebSocketConnection>();
@@ -26,17 +30,12 @@ public class WebSocketsHandler implements WebSocketHandler{
 	public void onMessage(WebSocketConnection connection, String msg)
 			throws Throwable {
 		
-		RobotsCmdMsg cmdMsg = new RobotsCmdMsg(msg);
-		
-		if (cmdMsg.isValid()) {
-			WebFaceAN.getInstance().publish(cmdMsg.createMxEvent());
+		if( msg.startsWith("p:")) {
+			String json = msg.substring(2);
+			MxEvent event = EventBuilder.build( json);
+			if( null != event)
+				Matrix.getInstance().publish(event, null);
 		}
-		
-		/*
-		for (WebSocketConnection ws : connections) {
-            ws.send(msg);
-        }
-		*/
 	}
 
 	@Override

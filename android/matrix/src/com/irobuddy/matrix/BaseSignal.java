@@ -10,8 +10,9 @@ public enum BaseSignal implements MxSignal {
     
 	EVENT_SIG_RESET /*= Q_USER_SIG*/,
 	EVENT_SIG_TIMEOUT,
+	VALID_BASIC_EVENT_SIG;
 	//
-	MAX_BASIC_EVENT_SIG;
+	public final static int MAX_BASIC_EVENT_SIG = 32;
 	
 	public byte toByte( ) {
 		byte sig;

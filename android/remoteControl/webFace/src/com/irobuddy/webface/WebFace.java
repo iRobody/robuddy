@@ -69,20 +69,20 @@ public class WebFace {
 	private WebFace(Context context){
 		//set default configuration of local WEB server
 		mWebServerListenPort = 8080;
-		mWebServerRootDir = Environment.getExternalStorageDirectory() + "/irobuddy_web";
+		mWebServerRootDir = Environment.getExternalStorageDirectory() + "/.irobuddy/webface";
 		mIsRunning = false;
 		mContext = context;
 		
 		//Copy all files under assents/web to /sdcard/irobuddy_web.
 		//Utils.CopyAssets(mContext, mWebServerRootDir);
-		
+		/*
 		//Copy all files under res/raw to /sdcard/irobuddy_web
 		Utils.clearResource(mWebServerRootDir);
 		Utils.buildResource(mContext, mWebServerRootDir);
-		
+		*/
 		//Create and start WebFaceAN
-		WebFaceAN.getInstance().start();
-		  
+		//WebFaceAN.getInstance().start();
+		
 		//Start WEB control server.
 		mControlServerThread = new WebControlServerThread();
 	}

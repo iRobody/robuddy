@@ -1,15 +1,15 @@
-package com.irobuddy.acc;
+package com.irobuddy.cruise;
 
-import com.irobuddy.matrix.*;
+import com.irobuddy.matrix.BaseSignal;
+import com.irobuddy.matrix.MxSignal;
 
-public enum AccessorySignal implements MxSignal{
+public enum CruiseSignal implements MxSignal {
 	/*offset = MAX_BASIC_EVENT_SIG*/
-	//private for acc on robody side 
-	ACC_SIG_DETACH,
-	ACC_SIG_ATTACH,
-	ACC_SIG_BUSEVENT, 
+	//private for acc on robody side
+	RNG_SIG_EDGE,
+	RNG_SIG_WALL,
 	
-	MAX_ACC_SIG;
+	MAX_RANGE_SIG;
 	
 	final static int offset = BaseSignal.MAX_BASIC_EVENT_SIG;
 	
@@ -23,6 +23,6 @@ public enum AccessorySignal implements MxSignal{
 	public MxSignal fromByte( byte sig) {
 		if( sig < offset) 
 			return BaseSignal.EVENT_SIG_RESET.fromByte(sig);
-		return AccessorySignal.values()[sig-offset];
+		return CruiseSignal.values()[sig-offset];
 	}
 }
