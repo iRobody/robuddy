@@ -6,6 +6,7 @@ import java.util.Set;
 import org.webbitserver.WebSocketConnection;
 import org.webbitserver.WebSocketHandler;
 
+import com.irobuddy.webface.utils.Logger;
 import com.irobuddy.event.EventBuilder;
 import com.irobuddy.matrix.Matrix;
 import com.irobuddy.matrix.MxEvent;

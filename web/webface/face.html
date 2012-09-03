@@ -64,7 +64,7 @@
     		</select>
     		</div>
     	</div>
-    	<div id="screen"><p>I'm screen</p></div>
+    	<div id="screen" style="text-align:center"><img id="image" src="" width="480" height="320"/></div>
     	<div id="ctrlPanel" class="Panel">
     		<div id="leftCtrl" class="LeftPanel">
     		<image src="arrow.png" width="210px" alt="arrow keys for direction, space key for brake" usemap="#arrow_ctl"></image>
@@ -234,6 +234,32 @@
     	robuddy.start(connLister);
     }
 </script>
+
+<script type="text/javascript" charset="utf-8">
+                        var ws = null;
+                        var host = document.location.host;
+                      
+                       
+                        function ready() {
+                        	
+    						ws = new WebSocket('ws://' + document.location.host + "/video");
+                            ws.onopen = function () {
+                                };
+ 
+                                ws.onerror = function (e) {
+                                };
+                               
+                                ws.onerror = function (error) {
+                                };
+ 
+                                var img;
+                                ws.onmessage = function (e) {
+                                        document.getElementById("image").src = 'data:image/jpeg;base64,'+e.data;
+                                }
+                        }
+                                               
+                        document.addEventListener("DOMContentLoaded", ready, false);
+                </script>
 <script type="text/javascript" src="robuddy.js"></script>  
 </body>
 </html>

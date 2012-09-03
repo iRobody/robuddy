@@ -7,13 +7,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.PowerManager;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.SurfaceView;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.FrameLayout;
 
 import com.android.future.usb.UsbAccessory;
 import com.android.future.usb.UsbManager;
 import com.irobuddy.acc.AccessoryAN;
 import com.irobuddy.webface.WebFace;
+import com.irobuddy.webface.utils.Logger;
 
 public class Supervisor extends Activity
 {
@@ -21,19 +28,38 @@ public class Supervisor extends Activity
 	static WebFace webFace = null;
 	PowerManager.WakeLock wakeLock;
 	
+	public static final int MSG_ADD_SURFACEVIEW = 0; 
+    public static final int MSG_DELETE_SURFACEVIEW = 1; 
+    
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-
+        
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, TAG);
         
         handleIntent( getIntent());
 
+        Handler webFaceHandler = new Handler() {
+        	@Override
+        	public void handleMessage (Message msg){
+        		switch(msg.what){
+        		case MSG_ADD_SURFACEVIEW:
+        			SurfaceView view = (SurfaceView)msg.obj;
+        			Logger.getDefault().debug(TAG, "ADD Surface.\n");
+        			FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(320,480,Gravity.BOTTOM);
+        			addContentView(view, lp);
+        			break;
+        		case MSG_DELETE_SURFACEVIEW:
+        			break;
+        		}
+        	}
+        };
+        
         if( null==webFace) {
-            webFace = WebFace.getInstance(this);
+            webFace = WebFace.getInstance(this, new WebCameraViewController(webFaceHandler));
         	webFace.run();
         }
     }
@@ -53,6 +79,7 @@ public class Supervisor extends Activity
     @Override
     public void onPause() {
     	super.onPause();
+
     	if( wakeLock.isHeld())
     		wakeLock.release();
     }
