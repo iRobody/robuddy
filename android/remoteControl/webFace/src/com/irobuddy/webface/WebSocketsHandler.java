@@ -6,6 +6,8 @@ import java.util.Set;
 import org.webbitserver.WebSocketConnection;
 import org.webbitserver.WebSocketHandler;
 
+import com.irobuddy.webface.utils.Logger;
+
 public class WebSocketsHandler implements WebSocketHandler{
 
 	private Set<WebSocketConnection> connections = new HashSet<WebSocketConnection>();
