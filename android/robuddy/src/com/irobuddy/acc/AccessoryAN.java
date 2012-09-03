@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.android.future.usb.UsbAccessory;
 import com.android.future.usb.UsbManager;
+import com.irobuddy.cruise.CruiseAN;
 import com.irobuddy.event.EventBuilder;
 import com.irobuddy.event.RobodyChannel;
 import com.irobuddy.matrix.ActiveNode;
@@ -19,6 +20,8 @@ import com.irobuddy.matrix.MxState;
 
 public class AccessoryAN extends ActiveNode implements Runnable{
 	final static String TAG = "ACCESSORY";
+	
+	CruiseAN cruiseAN = new CruiseAN();
 	
 	UsbManager usbMng;
 	public AccessoryAN( UsbManager usbManager) {
@@ -35,6 +38,7 @@ public class AccessoryAN extends ActiveNode implements Runnable{
 	public void start( UsbAccessory acc) {
 		attached( acc);
 		subscribe();
+		cruiseAN.start();
 		start( TAG, false, initial, null);
 	}
 	
@@ -42,6 +46,7 @@ public class AccessoryAN extends ActiveNode implements Runnable{
 		if( accessory != mAccessory || null == mAccessory)
 			return;
 		super.stop();
+		cruiseAN.stop();
 		try {
 			if (mFileDescriptor != null) {
 				mFileDescriptor.close();
@@ -142,12 +147,12 @@ public class AccessoryAN extends ActiveNode implements Runnable{
 			if( null == event)
 				return null;
 			if( relayEvent( event)) {
-				return ActiveNode.QSTATE_HANDLED;
+				return ActiveNode.MX_STATE_HANDLED;
 			}
 			
 			if( BaseChannel.EVENT_CH_PRIVATE == event.channel) {
 			}
-			return ActiveNode.QSTATE_HANDLED;
+			return ActiveNode.MX_STATE_HANDLED;
 		}
 	};
 	

@@ -12,11 +12,14 @@ public enum RobodyChannel implements MxChannel{
 	EVENT_CH_MOVE_S,
 	EVENT_CH_MOVE_C,
 	
-	MAX_ROBODY_PUB_EVENT_CH;
+	EVENT_CH_RANGE_S,
+	EVENT_CH_RANGE_C,
+	//
+	VALID_ROBODY_PUB_EVENT_CH;
 	
-	final static int offsetRobuddy = 1024;
+	public final static int MAX_ROBODY_PUB_EVENT_CH = 256;
 	
-	final static int offset = BaseChannel.MAX_BASIC_EVENT_CH.toByte();
+	final static int offset = BaseChannel.MAX_BASIC_EVENT_CH;
 	
 	public byte toByte( ) {
 		byte ch;

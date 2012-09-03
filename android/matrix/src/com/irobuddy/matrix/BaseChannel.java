@@ -2,7 +2,9 @@ package com.irobuddy.matrix;
 
 public enum BaseChannel implements MxChannel{
 	EVENT_CH_PRIVATE,
-	MAX_BASIC_EVENT_CH;
+	EVENT_CH_RESERVED;
+	
+	public final static int MAX_BASIC_EVENT_CH = 2;
 
 	public byte toByte( ) {
 		byte ch;

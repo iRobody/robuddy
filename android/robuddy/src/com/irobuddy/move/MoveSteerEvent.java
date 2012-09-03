@@ -7,47 +7,51 @@ import com.irobuddy.event.RobodyChannel;
 import com.irobuddy.matrix.MxEvent;
 
 public class MoveSteerEvent extends MxEvent {
-	public final static String MOVESTEER_EVENT_LEFT_NAME =  "left";
-	public final static String MOVESTEER_EVENT_SPEED_NAME = "speed";
+	public final static String MOVESTEER_EVENT_DIR_NAME = "direction";
 	
-	public final static int LENGTH = 2;
+	public final static int LENGTH = 1;
+	/**
+	 * -2/-1/0/1/2 = hard_left/left/0/right/hard_right
+	 */
+	public byte direction;
 	
-	public boolean left;
-	public byte speed;
+	public MoveSteerEvent( byte direction) {
+		super( RobodyChannel.EVENT_CH_MOVE_C, MoveSignal.MV_SIG_STEER);
+		signal = MoveSignal.MV_SIG_STEER;
+		length = LENGTH;
+		this.direction = direction;
+	}
 	
-	public static MoveSteerEvent build( byte[] rawEvent) {
-		MoveSteerEvent e = new MoveSteerEvent((rawEvent[4]==1), rawEvent[5]);
-		e.type = rawEvent[MxEvent.EVENT_TYPE_OFFSET];
+	public MoveSteerEvent( byte[] byteEvent) {
+		super( byteEvent, RobodyChannel.EVENT_CH_MOVE_C, MoveSignal.MV_SIG_STEER);
+		length = LENGTH;
+		this.direction = byteEvent[MxEvent.EVENT_HEADER_SIZE];
+	}
+	
+	public MoveSteerEvent( JSONObject jsonEvent) throws JSONException {
+		super( jsonEvent, RobodyChannel.EVENT_CH_MOVE_C, MoveSignal.MV_SIG_STEER);
+		length = LENGTH;
+		this.direction = (byte)(jsonEvent.getInt( MOVESTEER_EVENT_DIR_NAME));
+	}
+	
+	public static MoveSteerEvent build( byte[] byteEvent) {
+		MoveSteerEvent e = new MoveSteerEvent(byteEvent);
 		return e;
 	}
 	
 	public static MoveSteerEvent build( JSONObject jsonEvent) {
-		MoveSteerEvent e = new MoveSteerEvent(false, (byte)0);
 		try {
-			e.type = (byte)(jsonEvent.getInt( MxEvent.EVENT_TYPE_NAME));
-			e.left = jsonEvent.getBoolean( MOVESTEER_EVENT_LEFT_NAME);
-			e.speed = (byte)(jsonEvent.getInt( MOVESTEER_EVENT_SPEED_NAME));
+			MoveSteerEvent e = new MoveSteerEvent( jsonEvent);
+			return e;
 		} catch (JSONException error) {
 			return null;
 		}
-		return e;
-	}
-	
-	public MoveSteerEvent( boolean left, byte speed) {
-		super();
-		type = MxEvent.EVENT_TYPE_RELAY;
-		channel = RobodyChannel.EVENT_CH_MOVE_C;
-		signal = MoveSignal.MV_SIG_STEER;
-		length = LENGTH;
-		this.left = left;
-		this.speed = speed;
 	}
 	
 	public byte[] dump() {
-		byte[] rawEvent = super.dump();
+		byte[] byteEvent = super.initDump();
 
-		rawEvent[4] = left?(byte)1:0;
-		rawEvent[5] = speed;
-		return rawEvent;
+		byteEvent[MxEvent.EVENT_HEADER_SIZE] = direction;
+		return byteEvent;
 	}
 }

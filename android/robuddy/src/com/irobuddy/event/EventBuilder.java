@@ -8,6 +8,7 @@ import com.irobuddy.matrix.MxChannel;
 import com.irobuddy.matrix.MxEvent;
 import com.irobuddy.matrix.MxSignal;
 import com.irobuddy.move.MoveEventBuilder;
+import com.irobuddy.range.RangeEdgeEvent;
 
 /* decide the builder by channel*/
 public class EventBuilder {
@@ -35,6 +36,10 @@ public class EventBuilder {
 		case EVENT_CH_MOVE_C:
 			e = MoveEventBuilder.build(rawEvent);
 			break;
+		case EVENT_CH_RANGE_S:
+		case EVENT_CH_RANGE_C:
+			e = RangeEdgeEvent.build(rawEvent);
+			break;
 		}
 		return e;
 	}
@@ -59,6 +64,10 @@ public class EventBuilder {
 		case EVENT_CH_MOVE_S:
 		case EVENT_CH_MOVE_C:
 			e = MoveEventBuilder.build(jsonEvent);
+			break;
+		case EVENT_CH_RANGE_S:
+		case EVENT_CH_RANGE_C:
+			e = RangeEdgeEvent.build(jsonEvent);
 			break;
 		}
 		return e;

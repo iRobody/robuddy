@@ -26,7 +26,17 @@ public class MxEvent {
 	public final static String EVENT_LENGTH_NAME = "length";
 	public final static String EVENT_DATA_NAME = "data";
 	
-	public MxEvent(){}
+	public MxEvent() {
+		this.type = 0;
+		this.channel = BaseChannel.EVENT_CH_PRIVATE;
+		this.signal = BaseSignal.EVENT_SIG_RESET;
+	}
+	
+	public MxEvent( MxChannel channel, MxSignal signal) {
+		this.type = MxEvent.EVENT_TYPE_RELAY;
+		this.channel = channel;
+		this.signal = signal;
+	}
 	
 	public MxEvent( byte type, MxChannel channel, MxSignal signal) {
 		this.type = type;
@@ -35,59 +45,71 @@ public class MxEvent {
 	}
 	
 	/* build instance from block */
-	public MxEvent( byte[] rawEvent, MxChannel chBuilder, MxSignal sigBuilder) {
-		type = rawEvent[EVENT_TYPE_OFFSET];
-		channel = chBuilder.fromByte( rawEvent[EVENT_CHANNEL_OFFSET]);
-		signal = sigBuilder.fromByte(rawEvent[EVENT_SIG_OFFSET]);
-		length =  rawEvent[EVENT_LENGTH_OFFSET];
-		
-		raw = rawEvent;
-		rawBuf = ByteBuffer.wrap(raw);
-		dataBuf = ByteBuffer.wrap(raw, EVENT_HEADER_SIZE, length);
+	public MxEvent( byte[] byteEvent, MxChannel chBuilder, MxSignal sigBuilder) {
+		type = byteEvent[EVENT_TYPE_OFFSET];
+		channel = chBuilder.fromByte( byteEvent[EVENT_CHANNEL_OFFSET]);
+		signal = sigBuilder.fromByte(byteEvent[EVENT_SIG_OFFSET]);
+		length =  byteEvent[EVENT_LENGTH_OFFSET];
+		if( length != 0) {
+			raw = byteEvent;
+			dataBuf = ByteBuffer.wrap(raw, EVENT_HEADER_SIZE, length);
+		}
 	}
 	
 	public MxEvent( JSONObject jsonEvent, MxChannel chBuilder, MxSignal sigBuilder)
 			throws JSONException {
-		type = (byte)jsonEvent.getInt(EVENT_TYPE_NAME);
+		if( jsonEvent.has(EVENT_TYPE_NAME)) 
+			type = (byte)jsonEvent.getInt(EVENT_TYPE_NAME);
+		else
+			type = MxEvent.EVENT_TYPE_RELAY;
 		channel = chBuilder.fromByte( (byte)jsonEvent.getInt(EVENT_CHANNEL_NAME));
 		signal = sigBuilder.fromByte( (byte)jsonEvent.getInt(EVENT_SIG_NAME));
-		length =  (byte)jsonEvent.getInt(EVENT_LENGTH_NAME);
+		//length =  (byte)jsonEvent.getInt(EVENT_LENGTH_NAME);
 		// general data must in string
-		raw = jsonEvent.getString(EVENT_DATA_NAME).getBytes();
-		rawBuf = ByteBuffer.wrap(raw);
-		dataBuf = ByteBuffer.wrap(raw, EVENT_HEADER_SIZE, length);
+		if( jsonEvent.has(EVENT_DATA_NAME)) {
+			raw = jsonEvent.getString(EVENT_DATA_NAME).getBytes();
+			length = (byte)raw.length;
+			dataBuf = ByteBuffer.wrap(raw, EVENT_HEADER_SIZE, length);
+		}
 	}
 	
-	public static MxEvent build( byte[] rawEvent) {
+	public static MxEvent build( byte[] byteEvent) {
 		MxEvent e = null;
 		try {
-			e = new MxEvent( rawEvent, BaseChannel.EVENT_CH_PRIVATE, BaseSignal.EVENT_SIG_RESET);
+			e = new MxEvent( byteEvent, BaseChannel.EVENT_CH_PRIVATE, BaseSignal.EVENT_SIG_RESET);
 		} finally {
 		}
 		return e;
 	}
 	
 	public static MxEvent build( JSONObject jsonEvent) {
-		MxEvent e = null;
 		try {
-			e = new MxEvent( jsonEvent, BaseChannel.EVENT_CH_PRIVATE, BaseSignal.EVENT_SIG_RESET);
+			MxEvent e = new MxEvent( jsonEvent, BaseChannel.EVENT_CH_PRIVATE, BaseSignal.EVENT_SIG_RESET);
+			return e;
 		} catch (JSONException e1) {
-			// TODO Auto-generated catch block
+			return null;
 		}
-		return e;
+	}
+	
+	public byte[] initDump( ) {
+		byte[] byteEvent= new byte[EVENT_HEADER_SIZE+ length];
+		byteEvent[EVENT_TYPE_OFFSET] = type;
+		byteEvent[EVENT_CHANNEL_OFFSET] = channel.toByte();
+		byteEvent[EVENT_SIG_OFFSET] = signal.toByte();
+		return byteEvent;
 	}
 	
 	public byte[] dump() {
-		if( null == raw) {
-			raw = new byte[EVENT_HEADER_SIZE+ length];
-			rawBuf = ByteBuffer.wrap(raw);
-			dataBuf = ByteBuffer.wrap(raw, EVENT_HEADER_SIZE, length);
-			raw[EVENT_TYPE_OFFSET] = type;
-			raw[EVENT_CHANNEL_OFFSET] = channel.toByte();
-			raw[EVENT_SIG_OFFSET] = signal.toByte();
-			raw[EVENT_LENGTH_OFFSET] = length;
+		byte[] byteEvent= new byte[EVENT_HEADER_SIZE+ length];
+		byteEvent[EVENT_TYPE_OFFSET] = type;
+		byteEvent[EVENT_CHANNEL_OFFSET] = channel.toByte();
+		byteEvent[EVENT_SIG_OFFSET] = signal.toByte();
+		byteEvent[EVENT_LENGTH_OFFSET] = length;
+		if( length != 0) {
+			ByteBuffer dBuf = ByteBuffer.wrap(byteEvent, EVENT_HEADER_SIZE, length);
+			dBuf.put(dataBuf);
 		}
-		return raw;
+		return byteEvent;
 	}
 	
 	//event data structure, total 64byte size---------------------------------------
@@ -96,7 +118,6 @@ public class MxEvent {
 	public MxSignal signal;			//size = 1byte
 	public byte length;
 	public ByteBuffer dataBuf;	// only wrap after 4 byte header
-	
-	ByteBuffer rawBuf;
-	byte[] raw;	// byte[64]
+
+	byte[] raw;
 }

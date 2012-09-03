@@ -9,7 +9,7 @@ public class ActiveNode {
 	/**
 	 * event has been consumed
 	 */
-	public final static MxState QSTATE_HANDLED = new MxState(){
+	public final static MxState MX_STATE_HANDLED = new MxState(){
 		@Override
 		public MxState kick(MxEvent event) {
 			return null;
@@ -51,8 +51,9 @@ public class ActiveNode {
 	public void subscribe( final MxChannel[] chs) {
 		qf.subscribe( this, chs);
 	}
-	public void subscribe( MxChannel sig) {
+	public void subscribe( MxChannel ch) {
 		MxChannel[] chs = new MxChannel[1];
+		chs[0] = ch;
 		qf.subscribe( this, chs);
 	}
 	public void subscribe( ) {
@@ -84,10 +85,17 @@ public class ActiveNode {
 		Message.obtain( localHandler, _IS_KICK, e).sendToTarget();
 	}
 	
+	/*inital the state machine*/
+	void _initial( final MxEvent event) {
+		MxState s = state.kick(event);
+		if( MX_STATE_HANDLED != s && null != s)
+			state = s;
+	}
+	
 	/* real place to handler state*/
 	void _kick( final MxEvent event) {
 		MxState s = state.kick(event);
-		if( QSTATE_HANDLED != s && null != s)
+		if( MX_STATE_HANDLED != s && null != s)
 			state = s;
 	}
 	
@@ -100,9 +108,12 @@ public class ActiveNode {
 			public void handleMessage( Message msg) {
 				switch (msg.what) {
 				case _IS_INIT:
+					final MxEvent initE = (MxEvent)msg.obj;
+					_initial( initE);
+					break;
 				case _IS_KICK:
-					final MxEvent e = (MxEvent)msg.obj;
-					_kick( e);
+					final MxEvent kickE = (MxEvent)msg.obj;
+					_kick( kickE);
 					break;
 				case _IS_EXIT:
 					if( threadMode) {
