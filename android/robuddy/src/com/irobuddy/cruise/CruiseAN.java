@@ -49,14 +49,14 @@ public class CruiseAN extends ActiveNode {
 					if( edgeE.rearLeft == 1) msg+="rl,";
 					if( edgeE.rearRight == 1) msg+="rr";
 					Log.d( TAG, msg);
-					if( (edgeE.frontLeft==1) | (edgeE.frontRight==1) | (edgeE.rearLeft==1) | (edgeE.rearRight==1)) {
+					/*if( (edgeE.frontLeft==1) | (edgeE.frontRight==1) | (edgeE.rearLeft==1) | (edgeE.rearRight==1)) {
 						//MoveBrakeEvent e = new MoveBrakeEvent(true);
 						MoveRawEvent e = new MoveRawEvent((byte)-100, (byte)-100);
 						publish(e);
 					} else {
 						MoveRawEvent e = new MoveRawEvent((byte)100,(byte)100);
 						publish(e);
-					}
+					}*/
 				}
 					break;
 				default:

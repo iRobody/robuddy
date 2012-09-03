@@ -76,7 +76,8 @@
 				<area shape="rect" coords="71,71,140,140" onclick="javascript:onBrake()">
 				</map>
     		</div>
-    		<div id="rightCtrl" class="RightPanel"><p>some other tools here</p></div>
+    		<input id="connButton" type="button" value="..." onclick="connectRemote()"/>
+    		<div id="rightCtrl" class="RightPanel"><p>other tool box here</p></div>
     	</div>
     	<div id="infoPanel" class="Panel" style="visibility: hidden">
     		I'm information panel!
@@ -210,9 +211,27 @@
 	    keyDownMask &= (~mask);
     }
     
-    window.onload = function() {
+    connLister = {
+    	onconnecting: function(){
+    		document.getElementById("connButton").value="connecting";
+    	},
+    	onconnect: function(){
+    		document.getElementById("connButton").value="connected";
+    	},
+    	onclose: function(){
+    		document.getElementById("connButton").value="disconnected";
+    	},
+    	onerror: function(){
+    	},
+    }
+    
+    function connectRemote() {
+    	robuddy.reconnect();	
+    } 
+    
+    onload = function() {
     	//window.resizeTo(800,600);
-    	window.robuddy.start();
+    	robuddy.start(connLister);
     }
 </script>
 <script type="text/javascript" src="robuddy.js"></script>  

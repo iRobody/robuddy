@@ -1,13 +1,27 @@
 (function(){
 	var robuddy = {
 		connect: function () {
+			if( this.connTimer != undefined) {
+				return;
+			}
+			if( this.conn != undefined && this.conn.readyState == 1)
+				return;
 			var connection = new WebSocket('ws://' + document.location.host + "/chat");
-			connection.onopen    = function() { if(this.onconnected!=undefined)this.onconnected()};
-			connection.onclose   = function() { if(this.onclose!=undefined)this.onclose()};
-			connection.onerror   = function(e) { if(this.onerror!=undefined)this.onerror(e);};
-			connection.onmessage = function(e) { if(this.onmessage!=undefined)this.onmessage(e);};
+			if( this._connL != undefined)
+				this._connL.onconnecting();
+			connection.onopen    = function(){window.robuddy.onconnect()};
+			connection.onclose   = function(){window.robuddy.onclose()};
+			connection.onerror   = function(e){window.robuddy.onerror(e)};
+			connection.onmessage = function(e){window.robuddy.onmessage(e)};
 		    this.conn = connection;
-		    this.connStatus = "connecting";
+		},
+		
+		reconnect: function () {
+			if( this.connTimer != undefined) {
+				window.clearTimeout( this.connTimer);
+				delete this.connTimer;				
+			}
+			this.connect();
 		},
 		
 		subscribe: function (channel) {
@@ -20,28 +34,32 @@
 			}
 		},
 
-		start: function ( statusListener) {
-			if( statusListener )
-			connect();
+		start: function ( connListener) {
+			if( connListener != undefined) {
+				this._connL = connListener;
+			}
+			this.connect();
 		},
 		
-		onconnect: function (event) {
-			
-		},
-		
-		onconnected: function(event) {
+		onconnect: function () {
+			if( this._connL != undefined)
+				this._connL.onconnect();
 		},
 		
 		onmessage: function (event) {
 			
 		},
 		
-		onclose: function (event) {
-			setTimeout(function(){connect, 5000);
+		onclose: function () {
+			if( this._connL != undefined)
+				this._connL.onclose();
+			var timer = setTimeout( function(){window.robuddy.reconnect()}, 10000);
+			this.connTimer = timer;
 		},
 		
-		onerror: function (event) {
-			
+		onerror: function (error) {
+			if( this._connL != undefined && this._connL.onerror!=undefined)
+				this._connL.onerror(error);
 		},
 	}
 		
