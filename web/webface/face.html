@@ -83,7 +83,7 @@
     		I'm information panel!
     	</div> 
 <script>
-	var DIR_LEVEL_MAX = 3
+	var DIR_LEVEL_MAX = 2
 	var dirLevel = 0;
 	function onLeft(){
 		if( dirLevel < -DIR_LEVEL_MAX)
@@ -104,8 +104,8 @@
 		(new window.robuddy.MoveSteerEvent(0)).publish();
 	}
 	
-	var SPEED_GRADE = 20;
-	var SPEED_LEVEL_MAX = 5;
+	var SPEED_GRADE = 25;
+	var SPEED_LEVEL_MAX = 3;
 	var speedLevel = 0;
 	function onForward(){
 		if( speedLevel > SPEED_LEVEL_MAX)
